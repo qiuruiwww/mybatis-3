@@ -91,32 +91,64 @@ public class XMLConfigBuilder extends BaseBuilder {
     this.parser = parser;
   }
 
+  /**
+   * @Author Qiu Rui
+   * @Description 解析mybatis主配置文件和Mapper文件
+   * @Date 16:15 2020/7/25
+   * @Param []
+   * @return org.apache.ibatis.session.Configuration
+   **/
   public Configuration parse() {
+    //防止parse（）方法被同一个实列多次调用
     if (parsed) {
       throw new BuilderException("Each XMLConfigBuilder can only be used once.");
     }
     parsed = true;
+    //调用xpathparser.evalNode 方法创建表示configuration节点的xnode
+    //调用parseConfiguration方法对xnode进行处理
     parseConfiguration(parser.evalNode("/configuration"));
     return configuration;
   }
 
+  /**
+   * @Author Qiu Rui
+   * @Description 解析mybatis主配置文件和Mapper文件
+   * @Date 16:16 2020/7/25
+   * @Param [root]
+   * @return void
+   **/
   private void parseConfiguration(XNode root) {
     try {
       // issue #117 read properties first
+      //解析<Properties>标签，用于配置属性信息，这些属性信息可以通过${...}方式引用
       propertiesElement(root.evalNode("properties"));
       Properties settings = settingsAsProperties(root.evalNode("settings"));
       loadCustomVfs(settings);
       loadCustomLogImpl(settings);
+      //解析<typeAliases>标签，用于配置类型别名，为java类型设置一个更短的名字。
       typeAliasesElement(root.evalNode("typeAliases"));
+      //解析<plugins>标签，用于注册用户自定义的插件信息。
       pluginElement(root.evalNode("plugins"));
+      //解析<objectFactory>标签，mybatis通过对象工厂（objectFactory）创建参数对象和结果集映射对象，
+      // 默认的对象工厂需要做的是实例化目标类，要么通过默认的构造方法，要么在参数映射存在的时候通过参数构造方法来实例化
       objectFactoryElement(root.evalNode("objectFactory"));
+      //解析<objectWrapperFactory>标签，mybatis通过objectWrapperFactory创建Objectwrapper对象，通过Objectwrapper
+      // 对象能够方便的获取对象的属性，方法名等反射信息
       objectWrapperFactoryElement(root.evalNode("objectWrapperFactory"));
+      //解析<reflectorFactory>标签，mybatis通过反射工厂（reflectorFactory）创建描述java类型反射信息的reflector对象，
+      // 通过reflector对象能够很方便地获取class对象的setter/getter方法，属性等信息
       reflectorFactoryElement(root.evalNode("reflectorFactory"));
+      //解析<settings>标签，通过一些属性来控制mybatis运行时的一些行为。如，指定日志实现，默认的executor类型等
       settingsElement(settings);
       // read it after objectFactory and objectWrapperFactory issue #631
+      //解析<environments>标签，用于配置mybatis数据连接相关的环境及事务管理器信息。
+      // 通过该标签可以配置多个环境信息，然后指定使用哪个
       environmentsElement(root.evalNode("environments"));
+      //解析<databaseIdProvider>标签，mybatis能够根据不同的数据库厂商执行不同的SQL语句，该标签用于配置数据库厂商信息
       databaseIdProviderElement(root.evalNode("databaseIdProvider"));
+      //解析<typeHandlers>标签，用于注册用户自定义的类型处理器（typeHandler）
       typeHandlerElement(root.evalNode("typeHandlers"));
+      //解析<mappers>标签，用于配置mybatis Mapper信息
       mapperElement(root.evalNode("mappers"));
     } catch (Exception e) {
       throw new BuilderException("Error parsing SQL Mapper Configuration. Cause: " + e, e);
@@ -372,11 +404,13 @@ public class XMLConfigBuilder extends BaseBuilder {
             ErrorContext.instance().resource(resource);
             InputStream inputStream = Resources.getResourceAsStream(resource);
             XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, resource, configuration.getSqlFragments());
+            //解析Mapper文件
             mapperParser.parse();
           } else if (resource == null && url != null && mapperClass == null) {
             ErrorContext.instance().resource(url);
             InputStream inputStream = Resources.getUrlAsStream(url);
             XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, url, configuration.getSqlFragments());
+            //解析Mapper文件
             mapperParser.parse();
           } else if (resource == null && url == null && mapperClass != null) {
             Class<?> mapperInterface = Resources.classForName(mapperClass);

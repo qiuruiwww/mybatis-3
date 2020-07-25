@@ -25,10 +25,19 @@ import java.sql.SQLException;
  */
 public interface TypeHandler<T> {
 
+  /**
+   * @Author Qiu Rui
+   * @Description 为PreparedStatement对象设置参数
+   * @Date 14:34 2020/7/25
+   * @Param [ps, i, parameter, jdbcType]
+   * @return void
+   **/
   void setParameter(PreparedStatement ps, int i, T parameter, JdbcType jdbcType) throws SQLException;
 
   /**
    * Gets the result.
+   *
+   * 根据列名称获取该列的值
    *
    * @param rs
    *          the rs
@@ -40,8 +49,22 @@ public interface TypeHandler<T> {
    */
   T getResult(ResultSet rs, String columnName) throws SQLException;
 
+  /**
+   * @Author Qiu Rui
+   * @Description 根据列索引获取该列的值
+   * @Date 14:35 2020/7/25
+   * @Param [rs, columnIndex]
+   * @return T
+   **/
   T getResult(ResultSet rs, int columnIndex) throws SQLException;
 
+  /**
+   * @Author Qiu Rui
+   * @Description 根据存储过程调用结果
+   * @Date 14:35 2020/7/25
+   * @Param [cs, columnIndex]
+   * @return T
+   **/
   T getResult(CallableStatement cs, int columnIndex) throws SQLException;
 
 }

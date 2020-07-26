@@ -32,6 +32,8 @@ import org.apache.ibatis.session.SqlSession;
 /**
  * @author Clinton Begin
  * @author Eduardo Macarron
+ *
+ * JDK动态代理
  */
 public class MapperProxy<T> implements InvocationHandler, Serializable {
 
@@ -80,8 +82,10 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
     try {
       if (Object.class.equals(method.getDeclaringClass())) {
+        //从object类继承的方法不做处理
         return method.invoke(this, args);
       } else {
+        //处理拦截方法
         return cachedInvoker(method).invoke(proxy, method, args, sqlSession);
       }
     } catch (Throwable t) {

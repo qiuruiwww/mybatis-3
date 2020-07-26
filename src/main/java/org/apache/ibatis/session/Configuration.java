@@ -100,6 +100,8 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
  */
 public class Configuration {
 
+  //用于配置mybatis数据连接相关的环境及事务管理器信息。
+  //通过该标签可以配置多个环境信息，然后指定使用哪个
   protected Environment environment;
 
   //是否允许在嵌套语句中使用分页（RowBounds）。如果允许使用则设置为 false。
@@ -163,8 +165,14 @@ public class Configuration {
   protected AutoMappingUnknownColumnBehavior autoMappingUnknownColumnBehavior = AutoMappingUnknownColumnBehavior.NONE;
 
   protected Properties variables = new Properties();
+  //mybatis通过反射工厂（reflectorFactory）创建描述java类型反射信息的reflector对象，
+  //通过reflector对象能够很方便地获取class对象的setter/getter方法，属性等信息
   protected ReflectorFactory reflectorFactory = new DefaultReflectorFactory();
+  //mybatis通过对象工厂（objectFactory）创建参数对象和结果集映射对象，
+  // 默认的对象工厂需要做的是实例化目标类，要么通过默认的构造方法，要么在参数映射存在的时候通过参数构造方法来实例化，
   protected ObjectFactory objectFactory = new DefaultObjectFactory();
+  //mybatis通过objectWrapperFactory创建Objectwrapper对象，通过Objectwrapper
+  //对象能够方便的获取对象的属性，方法名等反射信息
   protected ObjectWrapperFactory objectWrapperFactory = new DefaultObjectWrapperFactory();
 
   //延迟加载的全局开关。当开启时，所有关联对象都会延迟加载。 特定关联关系中可通过设置 fetchType 属性来覆盖该项的开关状态。
@@ -172,6 +180,7 @@ public class Configuration {
   //指定 Mybatis 创建可延迟加载对象所用到的代理工具。
   protected ProxyFactory proxyFactory = new JavassistProxyFactory(); // #224 Using internal Javassist instead of OGNL
 
+  //mybatis能够根据不同的数据库厂商执行不同的SQL语句，该标签用于配置数据库厂商信息
   protected String databaseId;
   /**
    * Configuration factory class.

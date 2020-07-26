@@ -53,13 +53,28 @@ public class SimpleExecutor extends BaseExecutor {
     }
   }
 
+  /**
+   * 执行具体查询，由具体的执行器实现
+   *
+   * @param ms
+   * @param parameter
+   * @param rowBounds
+   * @param resultHandler
+   * @param boundSql
+   * @param <E>
+   * @return
+   * @throws SQLException
+   */
   @Override
   public <E> List<E> doQuery(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
     Statement stmt = null;
     try {
       Configuration configuration = ms.getConfiguration();
+      //创建StatementHandler
       StatementHandler handler = configuration.newStatementHandler(wrapper, ms, parameter, rowBounds, resultHandler, boundSql);
+      //用于创建jdbc statement对象，并完成参数占位符赋值
       stmt = prepareStatement(handler, ms.getStatementLog());
+      //执行查询
       return handler.query(stmt, resultHandler);
     } finally {
       closeStatement(stmt);
@@ -81,10 +96,20 @@ public class SimpleExecutor extends BaseExecutor {
     return Collections.emptyList();
   }
 
+  /**
+   * 创建jdbc statement对象，并完成参数占位符赋值
+   *
+   * @param handler
+   * @param statementLog
+   * @return
+   * @throws SQLException
+   */
   private Statement prepareStatement(StatementHandler handler, Log statementLog) throws SQLException {
     Statement stmt;
     Connection connection = getConnection(statementLog);
+    //创建jdbc statement对象
     stmt = handler.prepare(connection, transaction.getTimeout());
+    //使用mybatis中ParameterHandler组件为preparedstatement和callablestatement参数占位符设置值
     handler.parameterize(stmt);
     return stmt;
   }

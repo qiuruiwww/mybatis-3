@@ -138,6 +138,7 @@ public class MapperAnnotationBuilder {
           parseResultMap(method);
         }
         try {
+          //解析具体标签
           parseStatement(method);
         } catch (IncompleteElementException e) {
           configuration.addIncompleteMethod(new MethodResolver(this, method));
@@ -302,6 +303,11 @@ public class MapperAnnotationBuilder {
     return null;
   }
 
+  /**
+   * 解析具体标签
+   *
+   * @param method
+   */
   void parseStatement(Method method) {
     Class<?> parameterTypeClass = getParameterType(method);
     LanguageDriver languageDriver = getLanguageDriver(method);

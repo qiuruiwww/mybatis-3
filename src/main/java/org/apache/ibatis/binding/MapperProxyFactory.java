@@ -25,6 +25,8 @@ import org.apache.ibatis.session.SqlSession;
 
 /**
  * @author Lasse Voss
+ *
+ * mapper接口代理类的生成工厂，使用JDK动态代理
  */
 public class MapperProxyFactory<T> {
 

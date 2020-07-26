@@ -92,13 +92,18 @@ public class XMLMapperBuilder extends BaseBuilder {
 
   public void parse() {
     if (!configuration.isResourceLoaded(resource)) {
+      //调用XPathParser的evalNode()方法获取根节点对应的XNode对象，然后解析configuration
       configurationElement(parser.evalNode("/mapper"));
+      //将资源路径添加到configuration中
       configuration.addLoadedResource(resource);
       bindMapperForNamespace();
     }
 
+    //解析解析之前解析出现异常的resultmap对象
     parsePendingResultMaps();
+    //解析解析之前解析出现异常的cacheref对象
     parsePendingCacheRefs();
+    //继续解析之前解析出现异常的<select>等标签配置
     parsePendingStatements();
   }
 
@@ -106,24 +111,42 @@ public class XMLMapperBuilder extends BaseBuilder {
     return sqlFragments.get(refid);
   }
 
+  /**
+   * 解析解析configuration
+   *
+   * @param context
+   */
   private void configurationElement(XNode context) {
     try {
+      //获取命名空间
       String namespace = context.getStringAttribute("namespace");
       if (namespace == null || namespace.isEmpty()) {
         throw new BuilderException("Mapper's namespace cannot be empty");
       }
+      //设置当前正在解析的mapper配置的命名空间
       builderAssistant.setCurrentNamespace(namespace);
+      //解析<cache-ref>标签
       cacheRefElement(context.evalNode("cache-ref"));
+      //解析<cache>标签
       cacheElement(context.evalNode("cache"));
+      //解析所有的<parameterMap>标签
       parameterMapElement(context.evalNodes("/mapper/parameterMap"));
+      //解析所有的<resultMap>标签
       resultMapElements(context.evalNodes("/mapper/resultMap"));
+      //解析所有的<sql>标签
       sqlElement(context.evalNodes("/mapper/sql"));
+      //解析所有的<select|insert|update|delete>标签
       buildStatementFromContext(context.evalNodes("select|insert|update|delete"));
     } catch (Exception e) {
       throw new BuilderException("Error parsing Mapper XML. The XML location is '" + resource + "'. Cause: " + e, e);
     }
   }
 
+  /**
+   * 解析所有的<select|insert|update|delete>标签
+   *
+   * @param list
+   */
   private void buildStatementFromContext(List<XNode> list) {
     if (configuration.getDatabaseId() != null) {
       buildStatementFromContext(list, configuration.getDatabaseId());
@@ -131,8 +154,15 @@ public class XMLMapperBuilder extends BaseBuilder {
     buildStatementFromContext(list, null);
   }
 
+  /**
+   * 解析所有的<select|insert|update|delete>标签
+   *
+   * @param list
+   * @param requiredDatabaseId
+   */
   private void buildStatementFromContext(List<XNode> list, String requiredDatabaseId) {
     for (XNode context : list) {
+      //通过XMLStatementBuilder对象解析
       final XMLStatementBuilder statementParser = new XMLStatementBuilder(configuration, builderAssistant, context, requiredDatabaseId);
       try {
         statementParser.parseStatementNode();

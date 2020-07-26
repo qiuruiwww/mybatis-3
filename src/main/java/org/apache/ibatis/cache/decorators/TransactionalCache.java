@@ -32,6 +32,8 @@ import org.apache.ibatis.logging.LogFactory;
  * Blocking cache support has been added. Therefore any get() that returns a cache miss
  * will be followed by a put() so any lock associated with the key can be released.
  *
+ * 事务缓存装饰器，添加缓存需要提交事务才能真正写入缓存成功
+ *
  * @author Clinton Begin
  * @author Eduardo Macarron
  */

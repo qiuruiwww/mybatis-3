@@ -23,6 +23,8 @@ import java.util.StringJoiner;
 import org.apache.ibatis.reflection.ArrayUtil;
 
 /**
+ * CacheKey对象决定了缓存的key与哪些因素有关系，如果两次查询操作CacheKey对象相同，就认为这两次查询执行的相同的SQL语句
+ *
  * @author Clinton Begin
  */
 public class CacheKey implements Cloneable, Serializable {

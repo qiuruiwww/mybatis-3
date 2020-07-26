@@ -172,6 +172,9 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
   }
 
+  /**
+   * 解析解析之前解析出现异常的resultmap对象
+   */
   private void parsePendingResultMaps() {
     Collection<ResultMapResolver> incompleteResultMaps = configuration.getIncompleteResultMaps();
     synchronized (incompleteResultMaps) {
@@ -187,6 +190,9 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
   }
 
+  /**
+   * 解析解析之前解析出现异常的cacheref对象
+   */
   private void parsePendingCacheRefs() {
     Collection<CacheRefResolver> incompleteCacheRefs = configuration.getIncompleteCacheRefs();
     synchronized (incompleteCacheRefs) {
@@ -202,6 +208,9 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
   }
 
+  /**
+   * 继续解析之前解析出现异常的<select>等标签配置
+   */
   private void parsePendingStatements() {
     Collection<XMLStatementBuilder> incompleteStatements = configuration.getIncompleteStatements();
     synchronized (incompleteStatements) {
@@ -217,6 +226,11 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
   }
 
+  /**
+   * 解析<cache-ref>标签
+   *
+   * @param context
+   */
   private void cacheRefElement(XNode context) {
     if (context != null) {
       configuration.addCacheRef(builderAssistant.getCurrentNamespace(), context.getStringAttribute("namespace"));
@@ -229,6 +243,11 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
   }
 
+  /**
+   * 解析<cache>标签
+   *
+   * @param context
+   */
   private void cacheElement(XNode context) {
     if (context != null) {
       String type = context.getStringAttribute("type", "PERPETUAL");
@@ -240,10 +259,16 @@ public class XMLMapperBuilder extends BaseBuilder {
       boolean readWrite = !context.getBooleanAttribute("readOnly", false);
       boolean blocking = context.getBooleanAttribute("blocking", false);
       Properties props = context.getChildrenAsProperties();
+      //创建二级缓存实例
       builderAssistant.useNewCache(typeClass, evictionClass, flushInterval, size, readWrite, blocking, props);
     }
   }
 
+  /**
+   * 解析所有的<parameterMap>标签
+   *
+   * @param list
+   */
   private void parameterMapElement(List<XNode> list) {
     for (XNode parameterMapNode : list) {
       String id = parameterMapNode.getStringAttribute("id");
@@ -270,6 +295,11 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
   }
 
+  /**
+   * 解析所有的<resultMap>标签
+   *
+   * @param list
+   */
   private void resultMapElements(List<XNode> list) {
     for (XNode resultMapNode : list) {
       try {
@@ -365,6 +395,11 @@ public class XMLMapperBuilder extends BaseBuilder {
     return builderAssistant.buildDiscriminator(resultType, column, javaTypeClass, jdbcTypeEnum, typeHandlerClass, discriminatorMap);
   }
 
+  /**
+   * 解析所有的<sql>标签
+   *
+   * @param list
+   */
   private void sqlElement(List<XNode> list) {
     if (configuration.getDatabaseId() != null) {
       sqlElement(list, configuration.getDatabaseId());

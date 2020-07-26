@@ -16,6 +16,9 @@
 package org.apache.ibatis.session;
 
 /**
+ *
+ * 分布式环境下需要将此属性设置为statement，皮面其他应用节点执行SQL语句更新后，本节点缓存得不到刷新而导致的数据不一致问题
+ *
  * @author Eduardo Macarron
  */
 public enum LocalCacheScope {

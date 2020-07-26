@@ -33,6 +33,10 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.transaction.Transaction;
 
 /**
+ *
+ * 其他具体Executor的装饰器，增强缓存功能
+ * 二级缓存实现
+ *
  * @author Clinton Begin
  * @author Eduardo Macarron
  */
@@ -72,6 +76,7 @@ public class CachingExecutor implements Executor {
 
   @Override
   public int update(MappedStatement ms, Object parameterObject) throws SQLException {
+    //判断是否刷新缓存
     flushCacheIfRequired(ms);
     return delegate.update(ms, parameterObject);
   }
@@ -85,22 +90,41 @@ public class CachingExecutor implements Executor {
   @Override
   public <E> List<E> query(MappedStatement ms, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler) throws SQLException {
     BoundSql boundSql = ms.getBoundSql(parameterObject);
+    //构建CacheKey
     CacheKey key = createCacheKey(ms, parameterObject, rowBounds, boundSql);
     return query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
   }
 
+  /**
+   * 二级缓存实现查询
+   *
+   * @param ms
+   * @param parameterObject
+   * @param rowBounds
+   * @param resultHandler
+   * @param key
+   * @param boundSql
+   * @param <E>
+   * @return
+   * @throws SQLException
+   */
   @Override
   public <E> List<E> query(MappedStatement ms, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql)
       throws SQLException {
+    //缓存MappedStatement中维护的二级缓存对象
     Cache cache = ms.getCache();
     if (cache != null) {
+      //判断是否需要刷新二级缓存
       flushCacheIfRequired(ms);
       if (ms.isUseCache() && resultHandler == null) {
         ensureNoOutParams(ms, boundSql);
         @SuppressWarnings("unchecked")
+          //从MappedStatement对应的二级缓存中取数据
         List<E> list = (List<E>) tcm.getObject(cache, key);
         if (list == null) {
+          //缓存中数据不存在，从数据库查询
           list = delegate.query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
+          //将查询到的数据放入二级缓存中
           tcm.putObject(cache, key, list); // issue #578 and #116
         }
         return list;
@@ -161,6 +185,11 @@ public class CachingExecutor implements Executor {
     delegate.clearLocalCache();
   }
 
+  /**
+   * 判断是否刷新缓存
+   *
+   * @param ms
+   */
   private void flushCacheIfRequired(MappedStatement ms) {
     Cache cache = ms.getCache();
     if (cache != null && ms.isFlushCacheRequired()) {

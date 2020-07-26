@@ -741,6 +741,7 @@ public class Configuration {
     } else {
       executor = new SimpleExecutor(this, transaction);
     }
+    //判断是否开启二级缓存
     if (cacheEnabled) {
       //mybatis二级缓存
       executor = new CachingExecutor(executor);

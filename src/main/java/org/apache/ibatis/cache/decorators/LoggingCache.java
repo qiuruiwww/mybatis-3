@@ -20,6 +20,9 @@ import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
 /**
+ *
+ * 为缓存增加日志输出功能，记录缓存的请求次数和命中次数，通过日志输出缓存命中率
+ *
  * @author Clinton Begin
  */
 public class LoggingCache implements Cache {

@@ -23,6 +23,9 @@ import org.apache.ibatis.cache.Cache;
 /**
  * FIFO (first in, first out) cache decorator.
  *
+ * 先入先出缓存装饰器，内部有一个维护具有长度限制的key键值链表和一个被装饰器装饰的缓存对象，
+ * key值链表主要是维护key的先入先出顺序，而缓存存储和获取则是交给被注释的对象来完成
+ *
  * @author Clinton Begin
  */
 public class FifoCache implements Cache {

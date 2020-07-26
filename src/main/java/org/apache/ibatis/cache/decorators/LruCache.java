@@ -23,6 +23,8 @@ import org.apache.ibatis.cache.Cache;
 /**
  * Lru (least recently used) cache decorator.
  *
+ * 很好使用的缓存装饰器，当缓存容量满了之后，使用LRU算法淘汰最近最少使用的key和value。
+ *
  * @author Clinton Begin
  */
 public class LruCache implements Cache {

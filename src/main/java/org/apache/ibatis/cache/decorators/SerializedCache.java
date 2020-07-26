@@ -29,6 +29,8 @@ import org.apache.ibatis.cache.CacheException;
 import org.apache.ibatis.io.Resources;
 
 /**
+ * 序列号缓存装饰器，向缓存中添加对象时，对添加的对象进行序列化处理，从缓存中取对象时，进行序列化处理
+ *
  * @author Clinton Begin
  */
 public class SerializedCache implements Cache {

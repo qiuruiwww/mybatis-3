@@ -36,6 +36,8 @@ import java.util.concurrent.locks.ReadWriteLock;
  * }
  * </pre>
  *
+ * mybatis缓存使用装饰器模式实现
+ *
  * @author Clinton Begin
  */
 
@@ -43,6 +45,8 @@ public interface Cache {
 
   /**
    * @return The identifier of this cache
+   *
+   * 该方法用于获取缓存的ID，通常情况下缓存的ID为mapper的命名空间名称
    */
   String getId();
 
@@ -51,6 +55,7 @@ public interface Cache {
    *          Can be any object but usually it is a {@link CacheKey}
    * @param value
    *          The result of a select.
+   *  将一个对象添加到缓存中，key为cachekey的实例，value为需要缓存的对象
    */
   void putObject(Object key, Object value);
 
@@ -58,6 +63,8 @@ public interface Cache {
    * @param key
    *          The key
    * @return The object stored in the cache.
+   *
+   * 获取缓存key对应的缓存对象
    */
   Object getObject(Object key);
 
@@ -75,11 +82,15 @@ public interface Cache {
    * @param key
    *          The key
    * @return Not used
+   *
+   * 移除缓存中的对象
    */
   Object removeObject(Object key);
 
   /**
    * Clears this cache instance.
+   *
+   * 清空缓存
    */
   void clear();
 

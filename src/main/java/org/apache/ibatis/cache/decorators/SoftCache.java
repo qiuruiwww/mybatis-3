@@ -26,6 +26,11 @@ import org.apache.ibatis.cache.Cache;
  * Soft Reference cache decorator
  * Thanks to Dr. Heinz Kabutz for his guidance here.
  *
+ * 软引用缓存装饰器，内部维护了一个缓存对象的强引用队列和软引用队列，
+ * 缓存以软引用的方式添加到缓存中，并将软引用添加到队列中，获取缓存对象时，
+ * 如果对象已经被回收，则移除key，如果未被回收，则将对象添加到强引用的队列中，
+ * 避免被回收，如果强引用的队列已经满了，则移除最早入队的对象引用，
+ *
  * @author Clinton Begin
  */
 public class SoftCache implements Cache {

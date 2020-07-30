@@ -35,10 +35,15 @@ import org.apache.ibatis.session.Configuration;
  */
 public class BoundSql {
 
+  //mapper解析后的SQL内容
   private final String sql;
+  //参数映射信息
   private final List<ParameterMapping> parameterMappings;
+  //mapper参数对象
   private final Object parameterObject;
+  //额外参数信息，包括<bind>标签绑定的参数，内置参数
   private final Map<String, Object> additionalParameters;
+  //参数对象对应的MetaObject对象
   private final MetaObject metaParameters;
 
   public BoundSql(Configuration configuration, String sql, List<ParameterMapping> parameterMappings, Object parameterObject) {

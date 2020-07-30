@@ -24,10 +24,14 @@ import org.apache.ibatis.session.Configuration;
 
 /**
  * @author Clinton Begin
+ *
+ * 用于猫叔DynamicSqlSource、RawSqlSource、ProviderSqlSource解析后得到的静态SQL资源
  */
 public class StaticSqlSource implements SqlSource {
 
+  //mapper解析后的SQL内容
   private final String sql;
+  //参数映射信息
   private final List<ParameterMapping> parameterMappings;
   private final Configuration configuration;
 

@@ -22,6 +22,9 @@ import org.apache.ibatis.session.Configuration;
 
 /**
  * @author Clinton Begin
+ *
+ * 用于描述mapper xml文件中配置的SQL资源信息，这些SQL通常包含动态SQL配置或者${}参数占位符，需要在mapper 调用时才能确定具体的SQL语句
+ *
  */
 public class DynamicSqlSource implements SqlSource {
 

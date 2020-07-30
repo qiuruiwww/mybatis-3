@@ -26,6 +26,8 @@ import org.apache.ibatis.session.Configuration;
  * and create a {@link RawSqlSource}. So there is no need to use RAW unless you
  * want to make sure that there is not any dynamic tag for any reason.
  *
+ * 只支持静态的SQL语句配置
+ *
  * @since 3.2.0
  * @author Eduardo Macarron
  */

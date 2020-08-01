@@ -37,17 +37,29 @@ import org.apache.ibatis.session.Configuration;
 public class ResultMap {
   private Configuration configuration;
 
+  //id属性
   private String id;
+  //type属性
   private Class<?> type;
+  //映射信息
   private List<ResultMapping> resultMappings;
+  //主键映射信息
   private List<ResultMapping> idResultMappings;
+  //构造器映射信息
   private List<ResultMapping> constructorResultMappings;
+  //结果集映射信息
   private List<ResultMapping> propertyResultMappings;
+  //存放所有映射的数据库字段信息
   private Set<String> mappedColumns;
+  //存放所有映射的java实体属性信息
   private Set<String> mappedProperties;
+  //标签配置的鉴别器信息
   private Discriminator discriminator;
+  //是否有嵌套的<ResultMap>标签
   private boolean hasNestedResultMaps;
+  //是否存在嵌套查询
   private boolean hasNestedQueries;
+  //是否自动映射
   private Boolean autoMapping;
 
   private ResultMap() {

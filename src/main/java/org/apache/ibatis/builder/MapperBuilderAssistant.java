@@ -173,6 +173,13 @@ public class MapperBuilderAssistant extends BaseBuilder {
         .build();
   }
 
+  /**
+   * @Author Qiu Rui
+   * @Description 构建ResultMap对象
+   * @Date 12:53 2020/8/1
+   * @Param [id, type, extend, discriminator, resultMappings, autoMapping]
+   * @return org.apache.ibatis.mapping.ResultMap
+   **/
   public ResultMap addResultMap(
       String id,
       Class<?> type,
@@ -187,6 +194,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
       if (!configuration.hasResultMap(extend)) {
         throw new IncompleteElementException("Could not find a parent resultmap with id '" + extend + "'");
       }
+      //获取继承的父<ResultMap>
       ResultMap resultMap = configuration.getResultMap(extend);
       List<ResultMapping> extendedResultMappings = new ArrayList<>(resultMap.getResultMappings());
       extendedResultMappings.removeAll(resultMappings);
@@ -201,6 +209,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
       if (declaresConstructor) {
         extendedResultMappings.removeIf(resultMapping -> resultMapping.getFlags().contains(ResultFlag.CONSTRUCTOR));
       }
+      //将父ResultMap配置的映射信息添加到当前的ResultMap中
       resultMappings.addAll(extendedResultMappings);
     }
     ResultMap resultMap = new ResultMap.Builder(configuration, id, type, resultMappings, autoMapping)

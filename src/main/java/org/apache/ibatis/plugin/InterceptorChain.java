@@ -24,8 +24,16 @@ import java.util.List;
  */
 public class InterceptorChain {
 
+  //维护的所有的拦截器实列
   private final List<Interceptor> interceptors = new ArrayList<>();
 
+  /**
+   * @Author Qiu Rui
+   * @Description 调用所有的拦截器对象的plugin()方法执行拦截逻辑，返回目标对象代理对象
+   * @Date 10:46 2020/8/1
+   * @Param [target]
+   * @return java.lang.Object
+   **/
   public Object pluginAll(Object target) {
     for (Interceptor interceptor : interceptors) {
       target = interceptor.plugin(target);

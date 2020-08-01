@@ -30,8 +30,11 @@ import org.apache.ibatis.reflection.ExceptionUtil;
  */
 public class Plugin implements InvocationHandler {
 
+  //目标对象，ParameterHandler、ResultSetHandler、StatementHandler和Executor实列
   private final Object target;
+  //用户自定义的拦截器实列
   private final Interceptor interceptor;
+  //intercepts注解指定的方法
   private final Map<Class<?>, Set<Method>> signatureMap;
 
   private Plugin(Object target, Interceptor interceptor, Map<Class<?>, Set<Method>> signatureMap) {
@@ -40,7 +43,15 @@ public class Plugin implements InvocationHandler {
     this.signatureMap = signatureMap;
   }
 
+  /**
+   * @Author Qiu Rui
+   * @Description 创建代理对象
+   * @Date 10:55 2020/8/1
+   * @Param [target, interceptor]
+   * @return java.lang.Object
+   **/
   public static Object wrap(Object target, Interceptor interceptor) {
+    //获取通过intercepts注解指定的方法
     Map<Class<?>, Set<Method>> signatureMap = getSignatureMap(interceptor);
     Class<?> type = target.getClass();
     Class<?>[] interfaces = getAllInterfaces(type, signatureMap);
@@ -57,6 +68,7 @@ public class Plugin implements InvocationHandler {
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
     try {
       Set<Method> methods = signatureMap.get(method.getDeclaringClass());
+      //如果是intercepts注解指定的方法则执行方法的拦截逻辑
       if (methods != null && methods.contains(method)) {
         return interceptor.intercept(new Invocation(target, method, args));
       }
@@ -66,12 +78,21 @@ public class Plugin implements InvocationHandler {
     }
   }
 
+  /**
+   * @Author Qiu Rui
+   * @Description 获取通过intercepts注解指定的方法
+   * @Date 11:03 2020/8/1
+   * @Param [interceptor]
+   * @return java.util.Map<java.lang.Class<?>,java.util.Set<java.lang.reflect.Method>>
+   **/
   private static Map<Class<?>, Set<Method>> getSignatureMap(Interceptor interceptor) {
+    //获取intercepts注解信息
     Intercepts interceptsAnnotation = interceptor.getClass().getAnnotation(Intercepts.class);
     // issue #251
     if (interceptsAnnotation == null) {
       throw new PluginException("No @Intercepts annotation was found in interceptor " + interceptor.getClass().getName());
     }
+    //获取所有Signature注解信息
     Signature[] sigs = interceptsAnnotation.value();
     Map<Class<?>, Set<Method>> signatureMap = new HashMap<>();
     for (Signature sig : sigs) {
